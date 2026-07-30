@@ -58,10 +58,10 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent;}
 .odds{font-family:'Odds','Rubik',sans-serif;}
 
 @keyframes ticketfall{
-  0%{transform:translateY(-60px) rotate(0deg);opacity:0;}
-  8%{opacity:1;}
-  92%{opacity:1;}
-  100%{transform:translateY(112vh) rotate(480deg);opacity:0;}
+  0%{transform:translateY(-40px) rotate(0deg);opacity:0;}
+  10%{opacity:1;}
+  85%{opacity:1;}
+  100%{transform:translateY(300px) rotate(360deg);opacity:0;}
 }
 @keyframes ticketscroll{0%{transform:translateX(0);}100%{transform:translateX(-50%);}}
 @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,90,30,0.28);}50%{box-shadow:0 0 0 14px rgba(255,90,30,0);}}
@@ -79,7 +79,7 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent;}
 .hero-wrap .hero-extra{grid-area:extra;}
 @keyframes scrollCueBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
 .scroll-cue{
-  display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;
+  display:inline-flex;align-items:center;gap:8px;margin-top:22px;
   background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);
   padding:9px 16px;border-radius:999px;cursor:pointer;
   color:#fff;font-size:12.5px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;
@@ -87,15 +87,15 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent;}
 }
 .scroll-cue:active{transform:scale(0.97);}
 .scroll-cue svg{width:14px;height:14px;flex-shrink:0;animation:scrollCueBounce 1.6s ease-in-out infinite;}
-.hero-photo-wrap{position:relative;overflow:hidden;}
-.hero-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-photo-wrap{position:relative;overflow:hidden;aspect-ratio:1700/1063;background:#0B4A5C;}
+.hero-photo-wrap img{width:100%;height:100%;object-fit:contain;display:block;}
 .hero-extra{
   position:relative;overflow:hidden;
   padding:clamp(26px,6vw,38px) 16px clamp(34px,7vw,46px);
   text-align:center;color:#fff;
   background:linear-gradient(180deg,#0B4A5C 0%,#0E5A6E 55%,#0C4A5C 100%);
 }
-.hero-confetti{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
+.hero-confetti{position:absolute;top:0;left:0;right:0;height:260px;pointer-events:none;overflow:hidden;z-index:0;}
 .hero-confetti img{position:absolute;top:-60px;width:34px;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.25));}
 .hero-extra-inner{position:relative;z-index:2;max-width:420px;margin:0 auto;}
 .hero-ring{width:104px;margin:0 auto 16px;animation:floaty 5.5s ease-in-out infinite;}
@@ -107,7 +107,6 @@ button{font-family:inherit;-webkit-tap-highlight-color:transparent;}
     grid-template-columns:56% 44%;
     grid-template-areas:"photo extra";
     align-items:stretch;
-    min-height:460px;
   }
   .hero-extra{display:flex;align-items:center;padding:32px 40px;}
   .hero-extra-inner{text-align:left;margin:0;max-width:360px;}
@@ -308,10 +307,6 @@ footer .fcopy{font-size:11px;color:rgba(255,255,255,0.65);}
   <div class="hero-extra">
     <div class="hero-confetti" id="heroConfetti"></div>
     <div class="hero-extra-inner">
-      <button type="button" class="scroll-cue" id="scrollCueBtn">
-        <span>Листай ниже</span>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
       <div class="hero-ring">
         <svg viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg">
           <circle cx="160" cy="160" r="126" fill="#FF5A1E"/>
@@ -338,6 +333,10 @@ footer .fcopy{font-size:11px;color:rgba(255,255,255,0.65);}
           <a href="https://max.ru/id9726093509_bot" class="max-promo-top-btn" target="_blank" rel="noopener">Подписаться в MAX →</a>
         </div>
       </div>
+      <button type="button" class="scroll-cue" id="scrollCueBtn">
+        <span>Листай ниже</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
   </div>
 </div>
@@ -564,13 +563,14 @@ footer .fcopy{font-size:11px;color:rgba(255,255,255,0.65);}
   var ringSvgMarkup = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23FF5A1E"/><circle cx="50" cy="50" r="40" fill="none" stroke="%23fff" stroke-width="8" stroke-dasharray="17 12"/><circle cx="50" cy="50" r="23" fill="%230B5266"/></svg>';
   var ringSrc = "data:image/svg+xml," + ringSvgMarkup;
 
-  // ---------- "Листай ниже" — клик показывает правую панель (с кольцом), а не следующую секцию ----------
+  // ---------- "Листай ниже" — клик листает к следующей секции после hero ----------
   var scrollCueBtn = document.getElementById('scrollCueBtn');
   if (scrollCueBtn){
     scrollCueBtn.addEventListener('click', function(){
-      var target = document.querySelector('.hero-extra');
-      if (target && target.scrollIntoView){
-        target.scrollIntoView({behavior:'smooth', block:'start'});
+      var heroWrap = document.querySelector('.hero-wrap');
+      var next = heroWrap && heroWrap.nextElementSibling;
+      if (next && next.scrollIntoView){
+        next.scrollIntoView({behavior:'smooth', block:'start'});
       } else {
         window.scrollBy({top: window.innerHeight, behavior:'smooth'});
       }
